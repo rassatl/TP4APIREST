@@ -26,7 +26,6 @@ namespace TP4APIREST.Models.EntityFramework
         public int FilmId { get; set; }
 
         [Column("not_note")]
-        [Range(0,5)]
         public int? Note { get; set; } = null!;
 
         [InverseProperty("Notations")]

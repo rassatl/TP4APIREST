@@ -4,7 +4,7 @@ using System.Runtime.Intrinsics.X86;
 
 namespace TP4APIREST.Models.EntityFramework
 {
-    public class FilmRatingsDBContext : DbContext
+    public partial class FilmRatingsDBContext : DbContext
     {
         public FilmRatingsDBContext()
         {
@@ -32,11 +32,26 @@ namespace TP4APIREST.Models.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Notation>()
-                  .HasKey(m => new { m.UtilisateurId, m.FilmId });
             modelBuilder.Entity<Utilisateur>(entity =>{
-                    entity.Property(e => e.DateCreation).HasDefaultValueSql("now()");
+                entity
+                    .Property(e => e.DateCreation)
+                    .HasDefaultValueSql("now()");
+                entity
+                    .Property(e => e.Pays)
+                    .HasDefaultValue("France");
+                entity
+                    .HasIndex(e => e.Mail)
+                    .IsUnique()
+                    .HasDatabaseName("uq_utl_mail");
             });
+            modelBuilder.Entity<Notation>(entity =>{
+                entity.HasCheckConstraint("ck_not_note", "not_note between 0 and 5");
+            });
+            modelBuilder.Entity<Notation>().HasKey(m => new { m.UtilisateurId, m.FilmId });
+
+            OnModelCreatingPartial(modelBuilder);
         }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

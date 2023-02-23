@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TP4APIREST.Models.EntityFramework;
@@ -11,9 +12,10 @@ using TP4APIREST.Models.EntityFramework;
 namespace TP4APIREST.Migrations
 {
     [DbContext(typeof(FilmRatingsDBContext))]
-    partial class FilmRatingsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230223104143_CreationBDFilmRatingsv5")]
+    partial class CreationBDFilmRatingsv5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,7 +58,7 @@ namespace TP4APIREST.Migrations
 
                     b.HasKey("FilmId");
 
-                    b.ToTable("t_e_film_flm", (string)null);
+                    b.ToTable("t_e_film_flm");
                 });
 
             modelBuilder.Entity("TP4APIREST.Models.EntityFramework.Notation", b =>
@@ -79,7 +81,7 @@ namespace TP4APIREST.Migrations
 
                     b.HasIndex("FilmId");
 
-                    b.ToTable("t_j_notation_not", (string)null);
+                    b.ToTable("t_j_notation_not");
 
                     b.HasCheckConstraint("ck_not_note", "not_note between 0 and 5");
                 });
@@ -158,7 +160,7 @@ namespace TP4APIREST.Migrations
                         .IsUnique()
                         .HasDatabaseName("uq_utl_mail");
 
-                    b.ToTable("t_e_utilisateur_utl", (string)null);
+                    b.ToTable("t_e_utilisateur_utl");
                 });
 
             modelBuilder.Entity("TP4APIREST.Models.EntityFramework.Notation", b =>

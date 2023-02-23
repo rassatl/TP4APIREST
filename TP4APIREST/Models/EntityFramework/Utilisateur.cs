@@ -54,7 +54,7 @@ namespace TP4APIREST.Models.EntityFramework
 
         [Column("utl_pays")]
         [StringLength(50)]
-        public String? Pays { get; set; } = "France";
+        public String? Pays { get; set; }
 
         [Column("utl_latitude")]
         public float? Latitude { get; set; }
