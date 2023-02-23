@@ -38,7 +38,7 @@ namespace TP4APIREST.Models.EntityFramework
         [StringLength(30)]
         public String? Genre { get; set; }
 
-        [InverseProperty("NotesFilms")]
-        public virtual ICollection<Notation> Notation { get; set; }
+        [InverseProperty(nameof(Notation.FilmNavigation))]
+        public virtual ICollection<Notation> Notations { get; set; } = new List<Notation>();
     }
 }

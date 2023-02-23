@@ -17,22 +17,22 @@ namespace TP4APIREST.Models.EntityFramework
         {
         }
 
-        [Key]
-        [Column("utl_id")]
+        [ForeignKey("fk_not_utl")]
+        [Column("utl_id", Order = 0)]
         public int UtilisateurId { get; set; }
 
-        [Key]
-        [Column("flm_id")]
+        [ForeignKey("fk_not_flm")]
+        [Column("flm_id", Order = 1)]
         public int FilmId { get; set; }
 
         [Column("not_note")]
         [Range(0,5)]
         public int? Note { get; set; } = null!;
 
-        [InverseProperty("FilmNote")]
-        public virtual ICollection<Film> Film { get; set; }
+        [InverseProperty("Notations")]
+        public virtual Film FilmNavigation { get; set; } = null!;
 
-        [InverseProperty("UtilisateurNotant")]
-        public virtual ICollection<Utilisateur> Utilisateur { get; set; }
+        [InverseProperty("NotesUtilisateur")]
+        public virtual Utilisateur UtilisateurNavigation { get; set; } = null!;
     }
 }

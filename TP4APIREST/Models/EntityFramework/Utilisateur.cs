@@ -57,16 +57,16 @@ namespace TP4APIREST.Models.EntityFramework
         public String? Pays { get; set; } = "France";
 
         [Column("utl_latitude")]
-        public double? Latitude { get; set; }
+        public float? Latitude { get; set; }
 
         [Column("utl_longitude")]
-        public double? Longitude { get; set; }
+        public float? Longitude { get; set; }
 
         [Required]
         [Column("utl_datecreation")]
-        public DateTime? DateCreation { get; set; } = DateTime.Now;
+        public DateTime DateCreation { get; set; } = DateTime.Now;
 
-        [InverseProperty("NotesUtilisateur")]
-        public virtual ICollection<Notation> Notation { get; set; }
+        [InverseProperty(nameof(Notation.UtilisateurNavigation))]
+        public virtual ICollection<Notation> NotesUtilisateur { get; set; } = new List<Notation>();
     }
 }
