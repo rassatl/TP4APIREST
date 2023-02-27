@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using TP4APIREST.Models.EntityFramework;
+
 namespace TP4APIREST
 {
     public class Program
@@ -7,6 +10,8 @@ namespace TP4APIREST
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContext<FilmRatingsDBContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("FilmDbContext")));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

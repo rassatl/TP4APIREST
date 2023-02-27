@@ -12,14 +12,14 @@ using TP4APIREST.Models.EntityFramework;
 namespace TP4APIREST.Migrations
 {
     [DbContext(typeof(FilmRatingsDBContext))]
-    [Migration("20230223092246_CreationBDFilmRatings")]
-    partial class CreationBDFilmRatings
+    [Migration("20230227102538_NewAnnotations1")]
+    partial class NewAnnotations1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.13")
+                .HasAnnotation("ProductVersion", "6.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -82,6 +82,8 @@ namespace TP4APIREST.Migrations
                     b.HasIndex("FilmId");
 
                     b.ToTable("t_j_notation_not");
+
+                    b.HasCheckConstraint("ck_not_note", "not_note between 0 and 5");
                 });
 
             modelBuilder.Entity("TP4APIREST.Models.EntityFramework.Utilisateur", b =>
@@ -97,20 +99,22 @@ namespace TP4APIREST.Migrations
                         .HasColumnType("char(5)")
                         .HasColumnName("utl_cp");
 
-                    b.Property<DateTime?>("DateCreation")
-                        .IsRequired()
+                    b.Property<DateTime>("DateCreation")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("utl_datecreation");
+                        .HasColumnName("utl_datecreation")
+                        .HasDefaultValueSql("now()");
 
-                    b.Property<double?>("Latitude")
-                        .HasColumnType("double precision")
+                    b.Property<float?>("Latitude")
+                        .HasColumnType("real")
                         .HasColumnName("utl_latitude");
 
-                    b.Property<double?>("Longitude")
-                        .HasColumnType("double precision")
+                    b.Property<float?>("Longitude")
+                        .HasColumnType("real")
                         .HasColumnName("utl_longitude");
 
                     b.Property<string>("Mail")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("utl_mail");
@@ -125,8 +129,10 @@ namespace TP4APIREST.Migrations
                         .HasColumnName("utl_nom");
 
                     b.Property<string>("Pays")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
+                        .HasDefaultValue("France")
                         .HasColumnName("utl_pays");
 
                     b.Property<string>("Prenom")
@@ -150,6 +156,10 @@ namespace TP4APIREST.Migrations
                         .HasColumnName("utl_ville");
 
                     b.HasKey("UtilisateurId");
+
+                    b.HasIndex("Mail")
+                        .IsUnique()
+                        .HasDatabaseName("uq_utl_mail");
 
                     b.ToTable("t_e_utilisateur_utl");
                 });

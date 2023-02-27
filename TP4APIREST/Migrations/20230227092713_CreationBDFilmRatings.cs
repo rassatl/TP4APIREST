@@ -41,10 +41,10 @@ namespace TP4APIREST.Migrations
                     utl_rue = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     utl_cp = table.Column<string>(type: "char(5)", nullable: true),
                     utl_ville = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    utl_pays = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    utl_latitude = table.Column<double>(type: "double precision", nullable: true),
-                    utl_longitude = table.Column<double>(type: "double precision", nullable: true),
-                    utl_datecreation = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    utl_pays = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true, defaultValue: "France"),
+                    utl_latitude = table.Column<float>(type: "real", nullable: true),
+                    utl_longitude = table.Column<float>(type: "real", nullable: true),
+                    utl_datecreation = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -62,6 +62,7 @@ namespace TP4APIREST.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_t_j_notation_not", x => new { x.utl_id, x.flm_id });
+                    table.CheckConstraint("ck_not_note", "not_note between 0 and 5");
                     table.ForeignKey(
                         name: "FK_t_j_notation_not_t_e_film_flm_flm_id",
                         column: x => x.flm_id,
@@ -75,6 +76,12 @@ namespace TP4APIREST.Migrations
                         principalColumn: "utl_id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "uq_utl_mail",
+                table: "t_e_utilisateur_utl",
+                column: "utl_mail",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_t_j_notation_not_flm_id",

@@ -17,7 +17,7 @@ namespace TP4APIREST.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.13")
+                .HasAnnotation("ProductVersion", "6.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -56,7 +56,7 @@ namespace TP4APIREST.Migrations
 
                     b.HasKey("FilmId");
 
-                    b.ToTable("t_e_film_flm", (string)null);
+                    b.ToTable("t_e_film_flm");
                 });
 
             modelBuilder.Entity("TP4APIREST.Models.EntityFramework.Notation", b =>
@@ -79,7 +79,7 @@ namespace TP4APIREST.Migrations
 
                     b.HasIndex("FilmId");
 
-                    b.ToTable("t_j_notation_not", (string)null);
+                    b.ToTable("t_j_notation_not");
 
                     b.HasCheckConstraint("ck_not_note", "not_note between 0 and 5");
                 });
@@ -112,6 +112,7 @@ namespace TP4APIREST.Migrations
                         .HasColumnName("utl_longitude");
 
                     b.Property<string>("Mail")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("utl_mail");
@@ -158,7 +159,7 @@ namespace TP4APIREST.Migrations
                         .IsUnique()
                         .HasDatabaseName("uq_utl_mail");
 
-                    b.ToTable("t_e_utilisateur_utl", (string)null);
+                    b.ToTable("t_e_utilisateur_utl");
                 });
 
             modelBuilder.Entity("TP4APIREST.Models.EntityFramework.Notation", b =>
