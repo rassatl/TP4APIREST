@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TP4APIREST", "TP4APIREST\TP4APIREST.csproj", "{FB3EC62F-A3D2-4766-9DB0-D3C8FB18E077}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TP4APIREST", "TP4APIREST\TP4APIREST.csproj", "{FB3EC62F-A3D2-4766-9DB0-D3C8FB18E077}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TP4APIRESTTests", "TP4APIRESTTests\TP4APIRESTTests.csproj", "{15BF7A53-C442-4B56-897C-19808715D552}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{FB3EC62F-A3D2-4766-9DB0-D3C8FB18E077}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB3EC62F-A3D2-4766-9DB0-D3C8FB18E077}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB3EC62F-A3D2-4766-9DB0-D3C8FB18E077}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15BF7A53-C442-4B56-897C-19808715D552}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15BF7A53-C442-4B56-897C-19808715D552}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15BF7A53-C442-4B56-897C-19808715D552}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15BF7A53-C442-4B56-897C-19808715D552}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

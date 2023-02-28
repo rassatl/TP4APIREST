@@ -64,6 +64,10 @@ namespace TP4APIREST.Controllers
             {
                 return BadRequest();
             }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             _context.Entry(utilisateur).State = EntityState.Modified;
 

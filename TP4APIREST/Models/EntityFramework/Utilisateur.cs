@@ -50,7 +50,7 @@ namespace TP4APIREST.Models.EntityFramework
         public String? Rue { get; set; }
 
         [Column("utl_cp", TypeName = "char(5)")]
-        [StringLength(100, MinimumLength = , ErrorMessage = "len de  min stp")]
+        [StringLength(100, MinimumLength = 5, ErrorMessage = "len de  min stp")]
         public String? CodePostal { get; set; }
 
         [Column("utl_ville")]
