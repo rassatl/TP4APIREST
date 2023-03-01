@@ -15,63 +15,92 @@ namespace TP4APIREST.Controllers.Tests
     [TestClass()]
     public class UtilisateursControllerTests
     {
-        private readonly FilmRatingsDBContext _context;
-        private UtilisateursController _controller;
-
-        public UtilisateursControllerTests()
-        {
-            var builder = new DbContextOptionsBuilder<FilmRatingsDBContext>().UseNpgsql("Server=localhost;port=5432;Database=FilmDB; uid=postgres; password=postgres;"); // Chaine de connexion à mettre dans les ( )
-            _context = new FilmRatingsDBContext(builder.Options);
-            _controller = new UtilisateursController(_context);
-        }
-
-        [TestMethod()]
-        public void UtilisateursControllerTest()
-        {
-            Assert.Fail();
-        }
+        private readonly FilmRatingsDBContext context;
+        private UtilisateursController controller;
 
         [TestMethod()]
         public void GetUtilisateursTest()
         {
-            var dataFromBase = _controller.GetUtilisateurs();
-            var testDataFromBase = _context.Utilisateurs.ToList();
-            Assert.IsInstanceOfType(dataFromBase.Result, typeof(ActionResult<IEnumerable<Utilisateur>>), "Pas un Action result ienumerable de utilisateur"); // Test du type de retour
-            CollectionAssert.AreEqual(dataFromBase.Result.Value.ToList(), testDataFromBase,"Les listes ne sont pas les mêmes"); //Test de l'erreur
+            // Arrange
+            List<Utilisateur> users = context.Utilisateurs.ToList();
+
+            // Act
+            var result = controller.GetUtilisateurs().Result;
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ActionResult<IEnumerable<Utilisateur>>));
+
+            // Act
+            List<Utilisateur> usersresult = result.Value.ToList();
+
+            // Assert
+            CollectionAssert.AreEqual(users, usersresult);
         }
 
         [TestMethod()]
-        public void GetUtilisateurByIdTest()
+        public void GetUtilisateurByIdTest_HttpResponse200()
         {
-            var dataMethod = _controller.GetUtilisateurById(1).Result;
-            var data = _context.Utilisateurs.Where(c => c.UtilisateurId == 1).FirstOrDefault();
-            Assert.AreEqual(dataMethod.Value, data, "Les utilisateurs ne sont pas les mêmes"); //Test de l'erreur
-        }
+            // Arrange
+            Utilisateur user = context.Utilisateurs.FirstOrDefault(u => u.UtilisateurId == 1);
 
-        [TestMethod]
-        public void GetById_NotExistingIdPassed_ReturnsRightItem()
-        {
-            var result = _controller.GetUtilisateurById(800).Result;
-            Assert.IsInstanceOfType(result, typeof(ActionResult<Utilisateur>), "Pas un ActionResult"); // Test du type de retour
-            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult), "Erreur n'est pas 404"); //Test de l'erreur
-            Assert.IsNull(result.Value, "User pas null"); // Test du type du contenu (valeur) du retour
+            // Act
+            var result = controller.GetUtilisateurById(1).Result;
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ActionResult<Utilisateur>));
+            Assert.IsNull(result.Result);
+            Assert.IsInstanceOfType(result.Value, typeof(Utilisateur));
+            Assert.AreEqual(user, result.Value);
         }
 
         [TestMethod()]
-        public void GetUtilisateurByEmailTest()
+        public void GetUtilisateurByIdTest_HttpResponse404()
         {
-            var dataMethod = _controller.GetUtilisateurByEmail("gdominguez0@washingtonpost.com").Result;
-            var data = _context.Utilisateurs.Where(c => c.Mail == "gdominguez0@washingtonpost.com").FirstOrDefault();
-            Assert.AreEqual(dataMethod.Value, data, "Les utilisateurs ne sont pas les mêmes"); //Test de l'erreur
+            // Act
+            var result = controller.GetUtilisateurById(-1).Result;
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ActionResult<Utilisateur>));
+            Assert.IsNull(result.Value);
+            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
         }
 
+        [TestMethod()]
+        public void GetUtilisateurByEmailTest_HttpResponse200()
+        {
+            // Arrange
+            Utilisateur user = context.Utilisateurs.FirstOrDefault(u => u.Mail == "clilleymd@last.fm");
+
+            // Act
+            var result = controller.GetUtilisateurByEmail("clilleymd@last.fm").Result;
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ActionResult<Utilisateur>));
+            Assert.IsNull(result.Result);
+            Assert.IsInstanceOfType(result.Value, typeof(Utilisateur));
+            Assert.AreEqual(user, result.Value);
+        }
+
+        [TestMethod()]
+        public void GetUtilisateurByEmailTest_HttpResponse404()
+        {
+            // Act
+            var result = controller.GetUtilisateurByEmail("dummymail@gmail.com").Result;
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ActionResult<Utilisateur>));
+            Assert.IsNull(result.Value);
+            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+        }
+
+        [TestMethod()]
         public void PutUtilisateurTest_HttpResponse204()
         {
             // Arrange
-            Utilisateur user = _context.Utilisateurs.FirstOrDefault(u => u.UtilisateurId == 1);
+            Utilisateur user = context.Utilisateurs.FirstOrDefault(u => u.UtilisateurId == 1);
 
             // Act
-            var result = _controller.PutUtilisateur(1, user).Result;
+            var result = controller.PutUtilisateur(1, user).Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
@@ -81,10 +110,10 @@ namespace TP4APIREST.Controllers.Tests
         public void PutUtilisateurTest_HttpResponse400_BadId()
         {
             // Arrange
-            Utilisateur user = _context.Utilisateurs.FirstOrDefault(u => u.UtilisateurId == 1);
+            Utilisateur user = context.Utilisateurs.FirstOrDefault(u => u.UtilisateurId == 1);
 
             // Act
-            var result = _controller.PutUtilisateur(2, user).Result;
+            var result = controller.PutUtilisateur(2, user).Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(BadRequestResult));
@@ -114,9 +143,9 @@ namespace TP4APIREST.Controllers.Tests
             // Act
             if (!regex.IsMatch(user.Mobile))
             {
-                _controller.ModelState.AddModelError("Mobile", "The Mobile field is not a valid phone number.");
+                controller.ModelState.AddModelError("Mobile", "The Mobile field is not a valid phone number.");
             }
-            var result = _controller.PutUtilisateur(1, user).Result;
+            var result = controller.PutUtilisateur(1, user).Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
@@ -143,7 +172,7 @@ namespace TP4APIREST.Controllers.Tests
             };
 
             // Act
-            var result = _controller.PutUtilisateur(-1, user).Result;
+            var result = controller.PutUtilisateur(-1, user).Result;
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
@@ -171,25 +200,21 @@ namespace TP4APIREST.Controllers.Tests
             };
 
             // Act
-            _ = _controller.PutUtilisateur(1, user).Result;
+            _ = controller.PutUtilisateur(1, user).Result;
         }
 
         [TestMethod()]
-        public void PostUtilisateurTest()
+        public void PostUtilisateurTest_HttpResponse201()
         {
             // Arrange
-            Random rnd = new Random();
-            int chiffre = rnd.Next(1, 1000000000);
-            // Le mail doit être unique donc 2 possibilités :
-            // 1. on s'arrange pour que le mail soit unique en concaténant un random ou un timestamp
-            // 2. On supprime le user après l'avoir créé. Dans ce cas, nous avons besoin d'appeler la méthode DELETE de l’API ou remove du DbSet.
-            Utilisateur userAtester = new Utilisateur()
+            Utilisateur user = new Utilisateur()
             {
-                Nom = "MACHIN",
-                Prenom = "Luc",
+                UtilisateurId = -1,
+                Nom = "IPSUM",
+                Prenom = "Lorem",
                 Mobile = "0606070809",
-                Mail = "machin" + chiffre + "@gmail.com",
-                Pwd = "Toto1234!",
+                Mail = "l.ipsum_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + "@gmail.com",
+                Pwd = "lorsum",
                 Rue = "Chemin de Bellevue",
                 CodePostal = "74940",
                 Ville = "Annecy-le-Vieux",
@@ -197,47 +222,122 @@ namespace TP4APIREST.Controllers.Tests
                 Latitude = null,
                 Longitude = null
             };
+
             // Act
-            var result = _controller.PostUtilisateur(userAtester).Result; // .Result pour appeler la méthode async de manière synchrone, afin d'attendre l’ajout
+            var result = controller.PostUtilisateur(user).Result;
+
             // Assert
-            Utilisateur? userRecupere = _context.Utilisateurs.Where(u => u.Mail.ToUpper() == userAtester.Mail.ToUpper()).FirstOrDefault(); // On récupère l'utilisateur créé directement dans la BD grace à son mail unique
-            // On ne connait pas l'ID de l’utilisateur envoyé car numéro automatique.
-            // Du coup, on récupère l'ID de celui récupéré et on compare ensuite les 2 users
-            userAtester.UtilisateurId = userRecupere.UtilisateurId;
-            Assert.AreEqual(userRecupere, userAtester, "Utilisateurs pas identiques");
+            Assert.IsInstanceOfType(result, typeof(ActionResult<Utilisateur>));
+            Assert.IsNull(result.Value);
+            Assert.IsInstanceOfType(result.Result, typeof(CreatedAtActionResult));
+
+            // Dearrange
+            context.Utilisateurs.Remove(user);
+            context.SaveChanges();
         }
 
         [TestMethod()]
-        public void DeleteUtilisateurTest()
+        public void PostUtilisateurTest_HttpResponse400()
         {
             // Arrange
-            Random rnd = new Random();
-            int chiffre = rnd.Next(1, 1000000000);
-            Utilisateur userAtester = new Utilisateur()
+            Utilisateur user = new Utilisateur()
             {
-                UtilisateurId = 100,
-                Nom = "loulou",
-                Prenom = "lou",
+                UtilisateurId = -1,
+                Nom = "IPSUM",
+                Prenom = "Lorem",
+                Mobile = "1",
+                Mail = "l.ipsum_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + "@gmail.com",
+                Pwd = "lorsum",
+                Rue = "Chemin de Bellevue",
+                CodePostal = "74940",
+                Ville = "Annecy-le-Vieux",
+                Pays = "France",
+                Latitude = null,
+                Longitude = null
+            };
+            Regex regex = new Regex(@"^0[0-9]{9}$");
+
+            // Act
+            if (!regex.IsMatch(user.Mobile))
+            {
+                controller.ModelState.AddModelError("Mobile", "The Mobile field is not a valid phone number.");
+            }
+            var result = controller.PostUtilisateur(user).Result;
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(ActionResult<Utilisateur>));
+            Assert.IsNull(result.Value);
+            Assert.IsInstanceOfType(result.Result, typeof(BadRequestObjectResult));
+        }
+
+        [TestMethod()]
+        [ExpectedException(typeof(AggregateException))]
+        public void PostUtilisateurTest_AggregateException()
+        {
+            // Arrange
+            Utilisateur user = new Utilisateur()
+            {
+                UtilisateurId = -1,
+                Nom = "IPSUM",
+                Prenom = "Lorem",
                 Mobile = "0606070809",
-                Mail = "zozo" + chiffre + "@gmail.com",
-                Pwd = "fdp1234!",
-                Rue = "Chemin de travers",
-                CodePostal = "934",
-                Ville = "Poudlard",
+                Mail = null,
+                Pwd = "lorsum",
+                Rue = "Chemin de Bellevue",
+                CodePostal = "74940",
+                Ville = "Annecy-le-Vieux",
                 Pays = "France",
                 Latitude = null,
                 Longitude = null
             };
 
-            _context.Add(userAtester);
-            _context.SaveChanges();
+            // Act
+            _ = controller.PostUtilisateur(user).Result;
+        }
 
-            _controller.DeleteUtilisateur(userAtester.UtilisateurId);
+        [TestMethod()]
+        public void DeleteUtilisateurTest_HttpResponse204()
+        {
+            // Arrange
+            Utilisateur user = new Utilisateur()
+            {
+                UtilisateurId = -1,
+                Nom = "IPSUM",
+                Prenom = "Lorem",
+                Mobile = "0606070809",
+                Mail = "l.ipsum_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + "@gmail.com",
+                Pwd = "lorsum",
+                Rue = "Chemin de Bellevue",
+                CodePostal = "74940",
+                Ville = "Annecy-le-Vieux",
+                Pays = "France",
+                Latitude = null,
+                Longitude = null
+            };
+            context.Utilisateurs.Add(user);
+            context.SaveChanges();
 
-            Utilisateur? userRecupere = _context.Utilisateurs.Where(u => u.UtilisateurId == userAtester.UtilisateurId).FirstOrDefault(); // On récupère l'utilisateur créé directement dans la BD grace à son mail unique
+            // Act
+            var result = controller.DeleteUtilisateur(user.UtilisateurId).Result;
 
-            Assert.IsNull(userRecupere, "l'utilisateur existe alors qu'il ne devrait pas !");
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(NoContentResult));
 
+            // Act
+            var verif = context.Utilisateurs.FirstOrDefault(u => u.UtilisateurId == user.UtilisateurId);
+
+            // Assert
+            Assert.IsNull(verif);
+        }
+
+        [TestMethod()]
+        public void DeleteUtilisateurTest_HttpResponse404()
+        {
+            // Act
+            var result = controller.DeleteUtilisateur(-1).Result;
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
     }
 }
